@@ -139,21 +139,16 @@ export default function Home() {
     });
 
     const data = await response.json();
-
+    const parsed = JSON.parse(data.analysis);
     // Since backend returns:
     // { "analysis": "full text response from Groq" }
 
     setResult({
-      threatType: "AI Generated Threat Analysis",
-      severity: "Medium",
-      explanation: data.analysis,
-      actions: [
-        "Review the AI-generated recommendations above",
-        "Validate suspicious activity in SIEM logs",
-        "Escalate to SOC Tier-2 if required",
-        "Apply containment if threat is confirmed",
-      ],
-    });
+  threatType: parsed.threatType,
+  severity: parsed.severity,
+  explanation: parsed.explanation,
+  actions: parsed.actions,
+});
   } catch (error) {
     setResult({
       threatType: "Connection Error",
