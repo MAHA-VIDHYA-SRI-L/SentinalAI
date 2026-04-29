@@ -140,20 +140,30 @@ export default function Home() {
 
     const data = await response.json();
 
+    // Since backend returns:
+    // { "analysis": "full text response from Groq" }
+
     setResult({
-      threatType: data.threatType,
-      severity: data.severity,
-      explanation: data.explanation,
-      actions: data.actions,
+      threatType: "AI Generated Threat Analysis",
+      severity: "Medium",
+      explanation: data.analysis,
+      actions: [
+        "Review the AI-generated recommendations above",
+        "Validate suspicious activity in SIEM logs",
+        "Escalate to SOC Tier-2 if required",
+        "Apply containment if threat is confirmed",
+      ],
     });
   } catch (error) {
-    console.error("Error:", error);
-
     setResult({
       threatType: "Connection Error",
       severity: "Low",
-      explanation: "Could not connect to backend server.",
-      actions: ["Check Flask server", "Check API URL", "Restart backend"],
+      explanation: "Failed to connect frontend to backend Flask server.",
+      actions: [
+        "Check if Flask server is running",
+        "Verify backend URL is correct",
+        "Check CORS configuration in Flask",
+      ],
     });
   }
 
