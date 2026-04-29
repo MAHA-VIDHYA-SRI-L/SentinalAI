@@ -123,13 +123,52 @@ export default function Home() {
 
   async function handleAnalyze() {
     if (!log.trim()) return;
-    setScanning(true);
-    setResult(null);
-    // Simulate async API latency
-    await new Promise((r) => setTimeout(r, 1400));
-    setResult(analyzeLog(log));
-    setScanning(false);
+
+  setScanning(true);
+  setResult(null);
+
+  try {
+    const response = await fetch("http://127.0.0.1:5000/analyze-alert", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        alert: log,
+      }),
+    });
+
+    const data = await response.json();
+
+    // Since backend returns:
+    // { "analysis": "full text response from Groq" }
+
+    setResult({
+      threatType: "AI Generated Threat Analysis",
+      severity: "Medium",
+      explanation: data.analysis,
+      actions: [
+        "Review the AI-generated recommendations above",
+        "Validate suspicious activity in SIEM logs",
+        "Escalate to SOC Tier-2 if required",
+        "Apply containment if threat is confirmed",
+      ],
+    });
+  } catch (error) {
+    setResult({
+      threatType: "Connection Error",
+      severity: "Low",
+      explanation: "Failed to connect frontend to backend Flask server.",
+      actions: [
+        "Check if Flask server is running",
+        "Verify backend URL is correct",
+        "Check CORS configuration in Flask",
+      ],
+    });
   }
+
+  setScanning(false);
+}
 
   return (
     <main
