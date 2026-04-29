@@ -1,26 +1,239 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-primary: #020b18;
+  --bg-card: #050f1f;
+  --bg-input: #030d1a;
+  --neon-green: #00ff88;
+  --neon-cyan: #00e5ff;
+  --neon-blue: #0066ff;
+  --text-primary: #e2f0ff;
+  --text-muted: #4a7a9b;
+  --border-dim: #0d2a3f;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans), "Inter", system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+/* Animated grid background */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 3px; opacity: 0.4; }
+
+/* Neon text */
+.neon-title {
+  background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-green) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(0, 229, 255, 0.5));
+}
+
+/* Card */
+.cyber-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-dim);
+  border-radius: 16px;
+  box-shadow:
+    0 0 0 1px rgba(0, 229, 255, 0.05),
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(0, 229, 255, 0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+.cyber-card:hover {
+  box-shadow:
+    0 0 0 1px rgba(0, 229, 255, 0.15),
+    0 20px 60px rgba(0, 0, 0, 0.7),
+    0 0 40px rgba(0, 229, 255, 0.05),
+    inset 0 1px 0 rgba(0, 229, 255, 0.12);
+}
+
+/* Textarea */
+.cyber-textarea {
+  background: var(--bg-input);
+  border: 1px solid var(--border-dim);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-family: var(--font-geist-mono), "Courier New", monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  resize: vertical;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  padding: 14px 16px;
+  outline: none;
+}
+
+.cyber-textarea::placeholder { color: var(--text-muted); }
+
+.cyber-textarea:focus {
+  border-color: rgba(0, 229, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.08), 0 0 20px rgba(0, 229, 255, 0.1);
+}
+
+/* Analyze button */
+.cyber-btn {
+  background: linear-gradient(135deg, #003d66 0%, #005580 40%, #006644 100%);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 10px;
+  color: var(--neon-cyan);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 14px 32px;
+  position: relative;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+  width: 100%;
+  overflow: hidden;
+}
+
+.cyber-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(0, 255, 136, 0.1));
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.cyber-btn:hover:not(:disabled) {
+  border-color: rgba(0, 229, 255, 0.7);
+  box-shadow:
+    0 0 20px rgba(0, 229, 255, 0.3),
+    0 0 40px rgba(0, 229, 255, 0.15),
+    inset 0 0 20px rgba(0, 229, 255, 0.05);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.cyber-btn:hover:not(:disabled)::before { opacity: 1; }
+
+.cyber-btn:active:not(:disabled) { transform: translateY(0); }
+
+.cyber-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Scanning animation */
+.cyber-btn.scanning {
+  animation: scanPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes scanPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(0, 229, 255, 0.2); }
+  50% { box-shadow: 0 0 30px rgba(0, 229, 255, 0.5), 0 0 60px rgba(0, 229, 255, 0.2); }
+}
+
+/* Output section */
+.output-panel {
+  background: var(--bg-input);
+  border: 1px solid var(--border-dim);
+  border-radius: 10px;
+  overflow: hidden;
+  animation: fadeSlideIn 0.4s ease;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Severity badges */
+.badge {
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  text-transform: uppercase;
+}
+
+.badge-critical { background: rgba(255, 30, 60, 0.15); color: #ff4d6d; border: 1px solid rgba(255, 30, 60, 0.3); }
+.badge-high     { background: rgba(255, 120, 0, 0.15);  color: #ff8c42; border: 1px solid rgba(255, 120, 0, 0.3); }
+.badge-medium   { background: rgba(255, 200, 0, 0.12);  color: #ffd166; border: 1px solid rgba(255, 200, 0, 0.25); }
+.badge-low      { background: rgba(0, 229, 255, 0.1);   color: #00e5ff; border: 1px solid rgba(0, 229, 255, 0.25); }
+
+/* Section label */
+.section-label {
+  color: var(--neon-cyan);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+/* Action item */
+.action-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(13, 42, 63, 0.6);
+  font-size: 0.875rem;
+  color: #a8c8e8;
+}
+
+.action-item:last-child { border-bottom: none; }
+
+.action-bullet {
+  color: var(--neon-green);
+  font-size: 0.7rem;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+/* Status bar */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--neon-green);
+  box-shadow: 0 0 6px var(--neon-green);
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Divider */
+.cyber-divider {
+  border: none;
+  border-top: 1px solid var(--border-dim);
+  margin: 0;
 }
